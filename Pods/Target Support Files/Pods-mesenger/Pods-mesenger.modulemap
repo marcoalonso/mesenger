@@ -1,0 +1,6 @@
+framework module Pods_mesenger {
+  umbrella header "Pods-mesenger-umbrella.h"
+
+  export *
+  module * { export * }
+}
