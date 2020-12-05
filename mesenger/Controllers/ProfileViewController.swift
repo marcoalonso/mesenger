@@ -7,6 +7,8 @@
 
 import UIKit
 import FirebaseAuth
+import FBSDKLoginKit
+import GoogleSignIn
 
 class ProfileViewController: UIViewController {
     
@@ -43,7 +45,13 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
         let actionSheet = UIAlertController(title: "", message: "", preferredStyle: .actionSheet)
         actionSheet.addAction(UIAlertAction(title: "Cerrar Sesion", style: .destructive, handler: { [weak self] _ in
             guard let strongSelf = self else {return}
-            //MARK: - Cerrar sesion
+            //MARK: - Cerrar sesion en Facebook & Firebase
+            
+            FBSDKLoginKit.LoginManager().logOut()
+            
+            //cerrar sesion de Google
+            GIDSignIn.sharedInstance()?.signOut()
+            
             do {
                 try FirebaseAuth.Auth.auth().signOut()
                 
