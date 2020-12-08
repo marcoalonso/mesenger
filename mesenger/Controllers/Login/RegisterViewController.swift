@@ -195,13 +195,36 @@ class RegisterViewController: UIViewController {
                 strongSelf.alertUserLoginError(message: "Al parecer la cuenta con ese email ya ah sido creada anteriormente.")
                 return
             }
+            
             FirebaseAuth.Auth.auth().createUser(withEmail: email, password: password, completion: { authResult, error in
                 guard authResult != nil, error == nil else {
                     print("Error al crear usuario")
                     return
                 }
                 
-                DatabaseManager.shared.insertUser(with: ChatAppUser(firstName: firstName, lastName: lastName, emailAddress: email))
+                let chatUser = ChatAppUser(firstName: firstName,
+                                           lastName: lastName,
+                                           emailAddress: email)
+                DatabaseManager.shared.insertUser(with: chatUser,completion: { success in
+                    if success {
+                    //upload image
+                    guard let image = strongSelf.imageView.image,
+                          let data = image.pngData() else {
+                        return
+                    }
+                    let filename = chatUser.profilePictureFileName
+                    StorageManager.shared.uploadProfilePicture(with: data, fileName: filename, completion: { result in
+                        switch result {
+                        case .success(let downloadUrl):
+                            UserDefaults.standard.set(downloadUrl, forKey: "profile_picture_url")
+                            print(downloadUrl)
+                        case .failure(let error):
+                            print("StorageManager error: \(error)")
+                        }
+                    })
+                    }
+                    
+                })
                 
                 strongSelf.navigationController?.dismiss(animated: true, completion: nil)
             })
