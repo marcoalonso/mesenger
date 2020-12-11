@@ -166,11 +166,21 @@ class LoginViewController: UIViewController {
             }
             
             guard let result = authResult, error == nil else{
+                // MARK: - Marquito Code :P
+                DispatchQueue.main.async {
+                    let alerta = UIAlertController(title: "Ups!", message: "Error al inicar sesion", preferredStyle: .alert)
+                    alerta.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+                    self!.present(alerta, animated: true, completion: nil)
+                }
+                // fin de Marquito code
                 print("Error al iniciar sesison \(email)")
                 return
             }
             
             let user = result.user
+            
+            UserDefaults.standard.setValue(email, forKey: "email")
+            
             print("\(user) correctamente logueado!")
             strongSelf.navigationController?.dismiss(animated: true, completion: nil)
         })
@@ -245,6 +255,7 @@ extension LoginViewController: LoginButtonDelegate{
                 return
             }
             
+            UserDefaults.standard.setValue(email, forKey: "email")
             
             //Validar si el email ya existe en la BD
             DatabaseManager.shared.userExists(with: email, completion: {exists in

@@ -52,7 +52,7 @@ import GoogleSignIn
             return
         }
         
-        
+        UserDefaults.standard.setValue(email, forKey: "email")
         
         DatabaseManager.shared.userExists(with: email, completion: { exists in
             if !exists {
